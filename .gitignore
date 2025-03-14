@@ -36,7 +36,6 @@ ENV/
 *.swo
 
 # Project specific
-ffmpeg/
 ffmpeg-git-essentials.7z
 *.mp4
 *.mp3
