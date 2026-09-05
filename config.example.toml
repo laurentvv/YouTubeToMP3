@@ -1,17 +1,27 @@
 [ffmpeg]
+# Chemin vers le dossier contenant ffmpeg (ex: "C:\\ffmpeg\\dist\\bin" ou "ffmpeg")
+# Laisser "auto" ou vide pour détection automatique (PATH, C:\ffmpeg\dist\bin, ./ffmpeg)
+directory = "C:\\ffmpeg\\dist\\bin"
+executable = "ffmpeg.exe"
 url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z"
 archive_name = "ffmpeg-git-essentials.7z"
-directory = "ffmpeg"
-executable = "ffmpeg.exe"
 
 [youtube]
+# Liste des URLs de vidéos YouTube individuelles à télécharger et convertir
 video_urls = [
-    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    "https://www.youtube.com/watch?v=jNQXAC9IVRw"
+    "https://youtu.be/_R5r-2YJNyc?si=CKE7c_vE1omzZOcX"
 ]
+# Navigateur d'où extraire les cookies pour contourner la protection anti-bot de YouTube
+# Options: "firefox", "chrome", "edge", "brave", "opera", ou "" pour désactiver
+cookies_from_browser = "firefox"
 
 [youtube-playlist]
-playlist_url = "https://www.youtube.com/playlist?list=PLExamplePlaylistId"
+# URL d'une playlist YouTube à télécharger entièrement (optionnel)
+playlist_url = ""
 
 [output]
-directory = "D:\\MP3"
+# Dossier où enregistrer les fichiers MP3 générés (relatif ou absolu)
+directory = "mp3"
+# Qualité audio MP3 : "0" (meilleure qualité VBR ~245-320 kbps) à "9" (moins bonne)
+audio_quality = "0"
+

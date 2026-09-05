@@ -1,4 +1,0 @@
-pytube2
-rich
-toml
-py7zr

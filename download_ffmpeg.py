@@ -20,38 +20,56 @@ custom_theme = Theme({
 # Initialize console with the custom theme
 console = Console(theme=custom_theme)
 
-def download_ffmpeg():
+def find_7zip():
+    """Finds 7-Zip executable."""
+    import shutil
+    which_7z = shutil.which("7z")
+    if which_7z:
+        return which_7z
+    for path in [
+        r"C:\Program Files\7-Zip\7z.exe",
+        r"C:\Program Files (x86)\7-Zip\7z.exe",
+    ]:
+        if os.path.exists(path):
+            return path
+    return None
+
+def download_ffmpeg(target_dir: str = FFMPEG_DIR):
     """Download and extract the latest version of ffmpeg."""
-    if not os.path.exists(FFMPEG_EXE):
+    target_exe = os.path.join(target_dir, "ffmpeg.exe")
+    if not os.path.exists(target_exe):
+        seven_zip = find_7zip()
+        if not seven_zip:
+            console.print("7-Zip introuvable. Veuillez installer 7-Zip ou installer FFmpeg manuellement.", style="danger")
+            return False
+
         console.print("Downloading ffmpeg...", style="info")
-        # Download ffmpeg
         urllib.request.urlretrieve(FFMPEG_URL, FFMPEG_7Z)
         console.print("Download complete. Extracting...", style="info")
 
-        # Create destination folder if needed
-        os.makedirs(FFMPEG_DIR, exist_ok=True)
+        os.makedirs(target_dir, exist_ok=True)
         
-        # Extract only ffmpeg.exe with exact path
         subprocess.run([
-            r"C:\Program Files\7-Zip\7z.exe",
+            seven_zip,
             "e",
             FFMPEG_7Z,
             "ffmpeg-*-essentials_build/bin/ffmpeg.exe",
-            f"-o{FFMPEG_DIR}",
+            f"-o{target_dir}",
             "-y"
         ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # Verify that ffmpeg.exe was extracted correctly
-        if not os.path.exists(FFMPEG_EXE):
-            console.print(f"Error: {FFMPEG_EXE} was not extracted correctly", style="danger")
-            raise FileNotFoundError(f"ffmpeg.exe not found in {FFMPEG_DIR}")
+        if not os.path.exists(target_exe):
+            console.print(f"Error: {target_exe} was not extracted correctly", style="danger")
+            raise FileNotFoundError(f"ffmpeg.exe not found in {target_dir}")
         
         console.print("Extraction complete. ffmpeg.exe available.", style="info")
 
-        # Clean up the 7z file
-        os.remove(FFMPEG_7Z)
+        if os.path.exists(FFMPEG_7Z):
+            os.remove(FFMPEG_7Z)
+        return True
     else:
         console.print("ffmpeg is already downloaded.", style="info")
+        return True
 
 def show_linux_instructions():
     """LINUX instruction ffmpeg."""

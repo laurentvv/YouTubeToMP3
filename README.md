@@ -1,206 +1,243 @@
+<div align="center">
+
+<img src="assets/banner.png" alt="YouTubeToMP3 Banner" width="100%" />
+
 # YouTubeToMP3
 
-[![Python Version](https://img.shields.io/badge/python-3.13-blue)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+**Next-generation, high-fidelity YouTube video & playlist audio extractor powered by `yt-dlp`, `FFmpeg`, and `uv`.**
 
-A Python tool to download YouTube videos and convert them to MP3 files. This script is easy to use, configurable via a `.toml` file, and supports multiple URLs simultaneously.
+[![Python Version](https://img.shields.io/badge/python-3.14%2B-blue?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Package Manager](https://img.shields.io/badge/managed%20by-uv-DE5FE9?logo=astral&logoColor=white)](https://github.com/astral-sh/uv)
+[![Engine](https://img.shields.io/badge/engine-yt--dlp-red?logo=youtube&logoColor=white)](https://github.com/yt-dlp/yt-dlp)
+[![Encoder](https://img.shields.io/badge/audio-FFmpeg%209.0-green?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
+[![License](https://img.shields.io/badge/license-MIT-emerald)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#prerequisites)
 
-## Table of Contents
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#configuration">Configuration</a> •
+  <a href="#cli-usage">CLI Usage</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#troubleshooting">Troubleshooting</a> •
+  <a href="#license">License</a>
+</p>
 
-1. [Overview](#overview)
-2. [Features](#features)
-3. [Installation](#installation)
-   - [Windows](#installation-on-windows)
-   - [macOS](#installation-on-macos)
-   - [Linux](#installation-on-linux)
-4. [Configuration](#configuration)
-5. [Usage](#usage)
-6. [Contributions](#contributions)
-7. [License](#license)
+</div>
 
 ---
 
 ## Overview
 
-**YouTubeToMP3** is a convenient tool for extracting audio from YouTube videos and converting them to MP3 files. It uses popular libraries like `pytube` for downloading and `ffmpeg` for audio conversion. All configurations are centralized in a `.toml` file, allowing for easy customization and simplified management.
+**YouTubeToMP3** is an ultra-fast, robust, and automated audio downloader designed to extract pristine MP3 tracks from single YouTube videos or entire playlists. 
+
+Built on top of the battle-tested **`yt-dlp`** core and encoded using **`FFmpeg`**, it solves modern YouTube challenges including bot-detection barriers and JavaScript signature/n-challenge puzzles out of the box. Fully managed with **`uv`**, you get instant setup, zero dependency drift, and native support for modern Python (3.14+).
 
 ---
 
-## Features
+## Key Features
 
-- **Multiple Downloads**: Supports multiple YouTube URLs simultaneously.
-- **Playlist Support**: Automatically downloads all videos from a YouTube playlist.
-- **URL Validation**: Verifies that each URL is valid before processing the video.
-- **Automatic Conversion**: Converts downloaded videos to MP3 using FFmpeg.
-- **Modular Configuration**: All parameters (paths, URLs, etc.) are defined in a `.toml` file.
-- **Clear Messages**: Displays informative messages about operation progress.
-- **Temporary File Cleanup**: Automatically removes `.mp4` files after conversion.
+- ⚡ **Modern `uv` Project Management** — No legacy `pip` or fragile `requirements.txt`. Deterministic resolution with `uv.lock` in milliseconds.
+- 🐍 **Python 3.14+ Native** — Built and verified on Python 3.14 for maximum performance and future-proof compatibility.
+- 🛡️ **Anti-Bot & Challenge Bypass** — Transparent browser session cookie extraction (`Firefox`, `Chrome`, `Edge`, etc.) and integrated JavaScript challenge execution (`Node.js`, `Bun`, `Deno`).
+- 🎵 **Lossless Transcoding** — Extracts raw best-audio streams and encodes to variable-bitrate (VBR Q0 ~245-320 kbps) or constant-bitrate MP3 via `libmp3lame`.
+- 📋 **Batch & Playlist Downloading** — Fetch full album playlists or multiple video URLs with automated naming and metadata tagging.
+- 🔍 **Intelligent FFmpeg Discovery** — Auto-detects custom paths (e.g. `C:\ffmpeg\dist\bin`), system `PATH`, local `./ffmpeg` binaries, or downloads essentials on Windows automatically.
+- 🎨 **Rich Terminal Interface** — Live color-coded progress notifications, structured banners, and error diagnostic hints powered by `rich`.
+- 💻 **Flexible Dual Mode** — Run declaratively via `config.toml` or interactively with full CLI flag overrides.
 
 ---
 
-## Installation
+## Quick Start
 
-### General Prerequisites
+### 1. Prerequisites
 
-- Python 3.13
-- FFmpeg
-  - Windows: Automatic installation by the script
-  - Linux/macOS: To be installed via system repositories
+Ensure you have the following installed on your system:
 
-### Installation on Windows
+| Dependency | Required? | Description |
+| :--- | :---: | :--- |
+| **Python 3.14+** | **Yes** | Managed automatically or via system |
+| **`uv`** | **Yes** | Blazing-fast Python package installer & resolver ([Install Guide](https://docs.astral.sh/uv/getting-started/installation/)) |
+| **FFmpeg** | **Yes** | Audio conversion engine (Auto-detected if in `PATH` or `C:\ffmpeg\dist\bin`) |
+| **Node.js / Bun / Deno** | Optional | JavaScript runtime for solving YouTube player challenges |
 
-1. **Install 7-Zip** (necessary to extract FFmpeg):
-   For Windows, ffmpeg.exe is already in the ffmpeg directory.
-   - Download 7-Zip from [the official website](https://www.7-zip.org/download.html)
-   - Run the installation file and follow the instructions
-   - Ensure the default location (`C:\Program Files\7-Zip\7z.exe`) is used
+### 2. Clone & Setup
 
-2. **Clone the repository**:
-   ```bash
-   git clone https://github.com/laurentvv/YouTubeToMP3.git
-   cd YouTubeToMP3
-   ```
+```bash
+# 1. Clone repository
+git clone https://github.com/laurentvv/YouTubeToMP3.git
+cd YouTubeToMP3
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# 2. Sync dependencies using uv (creates isolated .venv in seconds)
+uv sync
 
-4. **Configuration**:
-   ```bash
-   cp config.example.toml config.toml
-   ```
-
-5. FFmpeg will be automatically downloaded during the first execution of the script.
-
-### Installation on macOS
-
-1. **Install FFmpeg** using one of these methods:
-   - With Homebrew:
-     ```bash
-     brew install ffmpeg
-     ```
-   - Direct download from [evermeet.cx/ffmpeg](https://evermeet.cx/ffmpeg/)
-
-2. **Clone the repository**:
-   ```bash
-   git clone https://github.com/laurentvv/YouTubeToMP3.git
-   cd YouTubeToMP3
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configuration**:
-   ```bash
-   cp config.example.toml config.toml
-   ```
-
-### Installation on Linux
-
-1. **Install FFmpeg**:
-   ```bash
-   # Debian/Ubuntu
-   sudo apt install ffmpeg
-   
-   # Fedora
-   sudo dnf install ffmpeg
-   
-   # Arch Linux
-   sudo pacman -S ffmpeg
-   ```
-
-2. **Clone the repository**:
-   ```bash
-   git clone https://github.com/laurentvv/YouTubeToMP3.git
-   cd YouTubeToMP3
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configuration**:
-   ```bash
-   cp config.example.toml config.toml
-   ```
+# 3. Create your configuration from template
+cp config.example.toml config.toml
+```
 
 ---
 
 ## Configuration
 
-The `config.toml` file contains all necessary parameters:
+Settings are centrally managed in `config.toml`:
 
-### Section `[ffmpeg]`
-- `url`: Link to the FFmpeg archive (if you haven't already installed it).
-- `archive_name`: Name of the FFmpeg archive file.
-- `directory`: Directory where FFmpeg will be extracted.
-- `executable`: Name of the FFmpeg executable.
+```toml
+[ffmpeg]
+# Path to directory containing ffmpeg executable (or "auto" / empty for auto-detection)
+directory = "C:\\ffmpeg\\dist\\bin"
+executable = "ffmpeg.exe"
 
-### Section `[youtube]`
-- `video_urls`: List of YouTube URLs to download and convert.
+[youtube]
+# List of YouTube video URLs to download and convert
+video_urls = [
+    "https://youtu.be/_R5r-2YJNyc?si=CKE7c_vE1omzZOcX"
+]
+# Browser from which to import session cookies (bypasses YouTube "Sign in to confirm you're not a bot")
+# Options: "firefox", "chrome", "edge", "brave", "opera", or "" to disable
+cookies_from_browser = "firefox"
 
-### Section `[youtube-playlist]`
-- `playlist_url`: URL of the YouTube playlist to download completely.
+[youtube-playlist]
+# URL of a full playlist to download (leave blank if downloading standalone videos)
+playlist_url = ""
 
-### Section `[output]`
-- `directory`: Directory where MP3 files will be saved.
-
----
-
-## Usage
-
-### Example Output
-
-```bash
-[info] FFmpeg is installed.
-[info] Downloading video from https://www.youtube.com/watch?v=zK6NtwHIjjg...
-[info] Converting D:\MP3\video1.mp4 to D:\MP3\video1.mp3...
-[success] File D:\MP3\video1.mp4 deleted.
-[success] Processing completed for https://www.youtube.com/watch?v=zK6NtwHIjjg
-[info] Processing playlist: https://www.youtube.com/playlist?list=PLaJwbiPX90jydet2NStKyh8YIc6d8_pgX...
-[success] Processing of all videos completed!
+[output]
+# Directory where MP3 files will be stored (relative or absolute)
+directory = "mp3"
+# MP3 audio quality: "0" (best VBR ~245-320 kbps) down to "9" (lowest quality)
+audio_quality = "0"
 ```
 
-### Adding New Videos
+---
 
-To add new videos, simply modify the `video_urls` list in the `config.toml` file.
+## CLI Usage
 
-### Downloading a Playlist
+### Option A: Run via `config.toml`
 
-Add the playlist URL in the `playlist_url` field of the `config.toml` file.
+Run the script directly using `uv` with all settings read from `config.toml`:
+
+```bash
+uv run main.py
+```
+
+### Option B: Direct URL Input (Interactive CLI)
+
+Pass one or more URLs directly on the command line:
+
+```bash
+# Download a single video
+uv run main.py "https://youtu.be/_R5r-2YJNyc"
+
+# Download multiple videos & specify destination folder
+uv run main.py -o "C:\Music\Rock" "https://youtu.be/video1" "https://youtu.be/video2"
+
+# Specify custom browser for cookies on the fly
+uv run main.py -b firefox "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+```
+
+### CLI Options Reference
+
+```text
+usage: main.py [-h] [-c CONFIG] [-o OUTPUT] [-b BROWSER] [-q QUALITY] [--ffmpeg FFMPEG] [urls ...]
+
+YouTubeToMP3 - High Quality Audio Downloader & Converter
+
+positional arguments:
+  urls                  YouTube video or playlist URLs to download
+
+options:
+  -h, --help            Show this help message and exit
+  -c, --config CONFIG   Path to custom config file (default: config.toml)
+  -o, --output OUTPUT   Output directory for MP3 files
+  -b, --browser BROWSER Browser to import cookies from (e.g. firefox, chrome, edge)
+  -q, --quality QUALITY MP3 audio quality (0 = best VBR, 9 = lowest)
+  --ffmpeg FFMPEG       Custom path to FFmpeg directory or binary
+```
 
 ---
 
-## Contributions
+## Architecture
 
-Contributions are welcome! If you'd like to contribute, please follow these steps:
+```mermaid
+flowchart LR
+    subgraph Input ["Source Input"]
+        URL["YouTube URL(s) / Playlist"]
+        CFG["config.toml / CLI Args"]
+    end
 
-1. Fork this repository.
-2. Create a branch for your feature (`git checkout -b feature/feature-name`).
-3. Commit your changes (`git commit -m 'Add XYZ feature'`).
-4. Push to the branch (`git push origin feature/feature-name`).
-5. Open a pull request.
+    subgraph Core ["Extraction Core"]
+        YTDLP["yt-dlp Engine"]
+        JS["JS Challenge Solver<br/>(Node.js / Bun)"]
+        COOKIE["Browser Cookies<br/>(Firefox / Chrome / Edge)"]
+        YTDLP --- JS
+        YTDLP --- COOKIE
+    end
+
+    subgraph Processing ["Audio Processing"]
+        AUDIO["Best Audio Stream<br/>(Opus / AAC / WebM)"]
+        FFMPEG["FFmpeg 9.0<br/>libmp3lame Transcoder"]
+    end
+
+    subgraph Output ["Destination"]
+        MP3["High-Fidelity MP3<br/>(VBR Q0 / 48 kHz / Tags)"]
+    end
+
+    URL & CFG --> YTDLP
+    YTDLP --> AUDIO
+    AUDIO --> FFMPEG
+    FFMPEG --> MP3
+```
+
+---
+
+## Troubleshooting
+
+<details>
+<summary><b>1. "Sign in to confirm you're not a bot"</b></summary>
+<br>
+
+YouTube aggressively rate-limits or blocks unauthenticated requests from data-center or automated IP ranges.
+- Ensure `cookies_from_browser = "firefox"` (or your preferred browser where you are logged into YouTube) is configured in `config.toml`.
+- Alternatively, supply the browser flag via CLI: `uv run main.py -b firefox "<url>"`.
+</details>
+
+<details>
+<summary><b>2. "JavaScript challenge solving failed"</b></summary>
+<br>
+
+YouTube uses encrypted signatures (`n`-challenges) that require a JavaScript interpreter.
+- Install [Node.js](https://nodejs.org/) (`node`), [Bun](https://bun.sh/), or [Deno](https://deno.com/).
+- YouTubeToMP3 automatically detects `node`, `bun`, and `deno` from your system path.
+</details>
+
+<details>
+<summary><b>3. "FFmpeg not found"</b></summary>
+<br>
+
+- Set `directory = "C:\\ffmpeg\\dist\\bin"` (or your custom FFmpeg path) in `config.toml`.
+- Or add FFmpeg to your system environment `PATH`.
+- On Windows, if no FFmpeg is present, the script can automatically download and configure portable FFmpeg essentials.
+</details>
+
+---
+
+## Contributing
+
+Contributions are welcome! If you'd like to improve YouTubeToMP3:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## License
 
-This project is under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Support
-
-If you encounter any problems or have questions, don't hesitate to open an issue in this repository.
-
----
-
-## Acknowledgments
-
-- Thanks to [`pytube`](https://github.com/pytube/pytube) for their excellent YouTube download module.
-- Thanks to [`rich`](https://github.com/Textualize/rich) for colorful console messages.
-- Thanks to [`ffmpeg`](https://ffmpeg.org/) for audio conversion.
+<div align="center">
+  <sub>Built with care by <a href="https://github.com/laurentvv">laurentvv</a>. Powered by <b>yt-dlp</b>, <b>FFmpeg</b>, and <b>uv</b>.</sub>
+</div>
